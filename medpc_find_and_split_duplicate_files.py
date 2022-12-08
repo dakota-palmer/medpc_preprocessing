@@ -82,14 +82,20 @@ for thisFile in allFiles:
     # TODO--
     # Check if there is a valid subject - if left empty will read 'Subject .txt'
     strSubjCheck= 'Subject .txt'
-    content.count(strSubjCheck)
+    subjPresent= content.count(strSubjCheck)
+    
+    if subjPresent >=1:
+        print('!~~~~~~ blank subject data found--'+ thisFile+ '~~~~~~~~!')
+        #flag this file, add to list
+        filesFlagged.append(thisFile)
     
     #normally a file should have 1 splitStr, if >0 (python counts starting with 0) split the file at each occurrence
     if n>1:
         print('!~~~~~~ duplicate data found--'+ thisFile+ '~~~~~~~~!')
         
         #flag this file, add to list
-        filesFlagged.append(thisFile)
+        if thisFile not in filesFlagged: #if not already in flagged list due to blank subject
+            filesFlagged.append(thisFile)
     
         #split the file at splitStr occurrences.      
         contentSplit= content.split(splitStr)
@@ -136,24 +142,26 @@ for thisFile in allFiles:
                 f.write(contentSplit[thisSplit])
                        
          
-        #after splitting,
-        #move the original file into a quarantine folder
-        # os.chdir(dataPathRoot)
+#after splitting,
+#move the flagged original files into a quarantine folder
 
-        fileNameOG= os.path.basename(thisFile)
-        
-        shutil.move(thisFile, dataPathQuarantine + fileNameOG)
+for thisFile in filesFlagged:
+# os.chdir(dataPathRoot)
+
+    fileNameOG= os.path.basename(thisFile)
     
-            
-            
+    shutil.move(os.path.abspath(thisFile), dataPathQuarantine + fileNameOG)
+
+
+#back to root directory            
 os.chdir(dataPathRoot)
                 
       
  #%% Save a log of all the files flagged
 
-strLog= str(date.today()) + '_LOG_Files_flagged_duplicates'+'.txt'
+strLog= str(date.today()) + '_LOG_Files_flagged_duplicates_and_blankSubjects'+'.txt'
 
-os.chdir(dataPathOutput)
+os.chdir(dataPathQuarantine)
 
 with open(strLog, 'w') as f: 
      for line in filesFlagged:
