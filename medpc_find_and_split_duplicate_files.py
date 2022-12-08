@@ -10,28 +10,55 @@ import glob
 
 from datetime import date
 
+import os
+
+import shutil
+
 #%% 
 # in MedPC, sometimes data files are auto-appended into single .txt due to user error (e.g. user forgets to save "subject" field)
 # find these files and split them into individual files
 
 
+#%% TODOs:
+
+# --- pathing / saving
+    # needs some work on overall pathing/filename management
+    # ideally want to isolate the flagged files and move them elsewhere
+    # ideally also want to save the new split files into their own folder
+    # will require resolving/isolating file names from the path itself
+
+# --- # FLAG EMPTY SUBJECTS
+
 #%% Define paths and string to use for splitting
 #path to the .txt datafiles saved by MedPC
 # dataPathInput= r'C:/Users/Dakota/Desktop/_christelle_opto_mpc-data/'
 
-dataPathInput= r'C:/Users/Dakota/Desktop/_christelle_opto_mpc-data/_test/'
+# dataPathInput= r'C:/Users/Dakota/Desktop/_christelle_opto_mpc-data/_test/'
 
+# root directory where this script is
+dataPathRoot= os.getcwd()
+
+# folder containing input .txt files
+dataPathInput= dataPathRoot+'/_find_and_split_duplicates/_input/'
 
 # output folder, here new folder to save split output files
-# NOTE: for now this is just saving alongside the original data files
-# dataPathOutput= r'./_output/split_files/'
-dataPathOutput= r'C:/Users/Dakota/Desktop/_christelle_opto_mpc-data/_output/split_files/'
+dataPathOutput= dataPathRoot+'/_find_and_split_duplicates/_output/'
+
+# separate folder to move flagged OG files 
+dataPathQuarantine= dataPathRoot+'/_find_and_split_duplicates/_flagged_file_quarantine/'
+
+# dataPathQuarantine= os.path.abspath(dataPathQuarantine)
+
+
+# dataPathQuarantine= os.path.abspath(os.path.dirname(dataPathQuarantine))
 
 #% Define string to search/split
 
 splitStr= 'Start Date:'
 
 #%% Get list of all .txt files in dataPathInput
+
+# os.chdir(dataPathInput)
 
 allFiles= glob.glob(dataPathInput+"*.txt")
 
@@ -50,6 +77,12 @@ for thisFile in allFiles:
     
     #count # of string occurrences in file
     n= content.count(splitStr)
+    
+    
+    # TODO--
+    # Check if there is a valid subject - if left empty will read 'Subject .txt'
+    strSubjCheck= 'Subject .txt'
+    content.count(strSubjCheck)
     
     #normally a file should have 1 splitStr, if >0 (python counts starting with 0) split the file at each occurrence
     if n>1:
@@ -81,30 +114,50 @@ for thisFile in allFiles:
             contentSplit[0]= contentSplit[0][:ind] + strFlagFilename + contentSplit[0][ind:]
 
             #also save string filename for saving into new file
-            ind= thisFile.index('.txt')        
-            thisSplitName= thisFile[:ind]+ strFlagFilename + thisFile[ind:]
+            # ind= thisFile.index('.txt')        
+            # thisSplitName= thisFile[:ind]+ strFlagFilename + thisFile[ind:]
 
+            # use os.path.basename to isolate file name from rest of path
+            thisSplitName= os.path.basename(thisFile) + strFlagFilename + '.txt'
+             
             # thisSplitName= dataPathOutput+thisSplitName
             
 
             # contentSplit[thisSplit]= strFlagFilename+contentSplit[0]+contentSplit[thisSplit]
 
-            #save into separate files
+            #save new split files into separate files
             # NOTE: for now this will save alongside the original file
             #TODO: control specific output folder, having issues with strings e.g. need raw string to convert \ to /
-                        
+                       
+            os.chdir(dataPathOutput)
+            
             with open(thisSplitName, 'w') as f:
                 
                 f.write(contentSplit[thisSplit])
-                                
+                       
+         
+        #after splitting,
+        #move the original file into a quarantine folder
+        # os.chdir(dataPathRoot)
+
+        fileNameOG= os.path.basename(thisFile)
+        
+        shutil.move(thisFile, dataPathQuarantine + fileNameOG)
+    
+            
+            
+os.chdir(dataPathRoot)
                 
       
  #%% Save a log of all the files flagged
 
-strLog= str(date.today()) + '_Files_flagged_duplicates'
+strLog= str(date.today()) + '_LOG_Files_flagged_duplicates'+'.txt'
+
+os.chdir(dataPathOutput)
 
 with open(strLog, 'w') as f: 
      for line in filesFlagged:
             f.write(f"{line}\n")          
 
 
+os.chdir(dataPathRoot)
