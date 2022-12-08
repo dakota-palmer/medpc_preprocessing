@@ -18,17 +18,6 @@ import shutil
 # in MedPC, sometimes data files are auto-appended into single .txt due to user error (e.g. user forgets to save "subject" field)
 # find these files and split them into individual files
 
-
-#%% TODOs:
-
-# --- pathing / saving
-    # needs some work on overall pathing/filename management
-    # ideally want to isolate the flagged files and move them elsewhere
-    # ideally also want to save the new split files into their own folder
-    # will require resolving/isolating file names from the path itself
-
-# --- # FLAG EMPTY SUBJECTS
-
 #%% Define paths and string to use for splitting
 #path to the .txt datafiles saved by MedPC
 # dataPathInput= r'C:/Users/Dakota/Desktop/_christelle_opto_mpc-data/'
@@ -42,10 +31,10 @@ dataPathRoot= os.getcwd()
 dataPathInput= dataPathRoot+'/_find_and_split_duplicates/_input/'
 
 # output folder, here new folder to save split output files
-dataPathOutput= dataPathRoot+'/_find_and_split_duplicates/_output/'
+dataPathOutput= dataPathRoot+'/_find_and_split_duplicates/_output/_split_files'
 
 # separate folder to move flagged OG files 
-dataPathQuarantine= dataPathRoot+'/_find_and_split_duplicates/_flagged_file_quarantine/'
+dataPathQuarantine= dataPathRoot+'/_find_and_split_duplicates/_output/_flagged_file_quarantine/'
 
 # dataPathQuarantine= os.path.abspath(dataPathQuarantine)
 
@@ -131,10 +120,7 @@ for thisFile in allFiles:
 
             # contentSplit[thisSplit]= strFlagFilename+contentSplit[0]+contentSplit[thisSplit]
 
-            #save new split files into separate files
-            # NOTE: for now this will save alongside the original file
-            #TODO: control specific output folder, having issues with strings e.g. need raw string to convert \ to /
-                       
+            #save new split files into separate files 
             os.chdir(dataPathOutput)
             
             with open(thisSplitName, 'w') as f:
@@ -159,7 +145,7 @@ os.chdir(dataPathRoot)
       
  #%% Save a log of all the files flagged
 
-strLog= str(date.today()) + '_LOG_Files_flagged_duplicates_and_blankSubjects'+'.txt'
+strLog= '_LOG_Files_flagged_duplicates_and_blankSubjects'+str(date.today()) +'.txt'
 
 os.chdir(dataPathQuarantine)
 
