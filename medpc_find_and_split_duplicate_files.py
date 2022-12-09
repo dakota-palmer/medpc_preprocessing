@@ -8,7 +8,8 @@ Created on Wed Dec  7 16:14:38 2022
 #%% dependencies
 import glob
 
-from datetime import date
+# from datetime import date
+import datetime
 
 import os
 
@@ -18,6 +19,11 @@ import shutil
 # in MedPC, sometimes data files are auto-appended into single .txt due to user error (e.g. user forgets to save "subject" field)
 # find these files and split them into individual files
 
+#%% TODOs:
+    
+    #-- Deal with duplicate dates / date correction
+        #for some reason some files have appended data from different Start Dates... the new Split file names should reflect the correct start time 
+        
 #%% Define paths and string to use for splitting
 #path to the .txt datafiles saved by MedPC
 # dataPathInput= r'C:/Users/Dakota/Desktop/_christelle_opto_mpc-data/'
@@ -145,7 +151,7 @@ os.chdir(dataPathRoot)
       
  #%% Save a log of all the files flagged
 
-strLog= '_LOG_Files_flagged_duplicates_and_blankSubjects'+str(date.today()) +'.txt'
+strLog= '_LOG_Files_flagged_duplicates_and_blankSubjects_'+str(datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')) +'.txt'
 
 os.chdir(dataPathQuarantine)
 
