@@ -16,10 +16,7 @@ Created on Mon Dec 12 12:07:48 2022
 #%% TODO
 
 # -- pandas profiling ? easy automated report of behavioral variables to find/flag outlier sessions (e.g. lickometer/PE detector malfunctions)
-# -- improve paths
-# -- support multiple excel sheets
-# -- add metadata? not worth it at this point, simply want to view raw data.
-
+# -- make simpler training phases based on MSN dictionary (should make outliers/overall patterns more clear)
 
 if __name__ == '__main__':
     #this is added for pandas-profiling
@@ -72,34 +69,50 @@ if __name__ == '__main__':
     
     
     
-    #%% Use pandas profiling on event counts
-    #This might be a decent way to quickly view behavior session results/outliers if automated
+    #%% Use pandas profiling
+    # This might be a decent way to quickly view behavior session results/outliers if automated
     # note- if you are getting errors with ProfileReport() and you installed using conda, remove and reinstall using pip install
     
-    from pandas_profiling import ProfileReport
+    # from pandas_profiling import ProfileReport
     
-    import matplotlib.pyplot as plt
+    # import matplotlib.pyplot as plt
     
     
-    # profile = ProfileReport(dfRaw, title='MEDPC_excel_file_overview', explorative = False)
-    # profile = ProfileReport(dfRaw, explorative = False)
-    profile = ProfileReport(dfRaw, explorative=True, n_freq_table_max=250)
+    # # profile = ProfileReport(dfRaw, title='MEDPC_excel_file_overview', explorative = False)
+    # # profile = ProfileReport(dfRaw, explorative = False)
+    # profile = ProfileReport(dfRaw, explorative=True, n_freq_table_max=250)
 
     
-    os.chdir(dataPathOutput)
+    # os.chdir(dataPathOutput)
     
     
-    # save profile report as html
-    profile.to_file('pandasProfile-MEDPC_excel_file_overview.html')
+    # # save profile report as html
+    # profile.to_file('pandasProfile-MEDPC_excel_file_overview.html')
     
     
-    os.chdir(dataPathRoot)
+    # os.chdir(dataPathRoot)
     
     
-    #%%  convert StartDate column to datetime for better readability in plots
+    #%% Convert datetime variables 
 
-        dfRaw.StartDate= pd.to_datetime(dfRaw['StartDate'], format='%y%m%d')
+    #make new column with StartDate and StartTime combined prior to conversion
+    #convert to string prior to combining
+    dfRaw.StartDate= dfRaw.StartDate.astype('string')
+    dfRaw.StartTime= dfRaw.StartTime.astype('string')
+
+    dfRaw['StartDateTime']= dfRaw.StartDate+dfRaw.StartTime
+
+    dfRaw.StartDateTime= dfRaw.StartDate+dfRaw.StartTime
     
+        
+    dfRaw.StartDateTime= pd.to_datetime(dfRaw['StartDateTime'], format='%y%m%d%H%M%S')
+
+    # convert StartDate column to datetime for better readability in plots
+    dfRaw.StartDate= pd.to_datetime(dfRaw['StartDate'], format='%y%m%d')
+    
+    # simply keep StartTime as int (because for some reason was inserting default year/month as 1900)
+    dfRaw.StartTime= dfRaw.StartTime.astype('int')
+
         
     #%% ~~~ PLOTS ~~~~~~~
     
@@ -125,6 +138,8 @@ if __name__ == '__main__':
     ind= dfRaw.isnull()
     test3= dfRaw[ind]
 
+    #%% Sort data by StartDateTime
+    # dfRaw= dfRaw.sort_values('StartDateTime')
 
 
     #%% Use Plotly to save interactive html
@@ -138,39 +153,64 @@ if __name__ == '__main__':
 
     
     
-    fig= px.line(dfRaw, x= 'StartDate', line_group='Subject', y='Subject', color='MSN', markers=True)
+    # fig= px.line(dfRaw, x= 'StartDate', line_group='Subject', y='Subject', color='MSN', markers=True)
 
-    fig.show() 
-    #plotly export as interactive html
-    figName= 'train history by subject with MSN'
-    fig.write_html(dataPathOutput+figName+'.html')
+    # fig.show() 
+    # #plotly export as interactive html
+    # figName= 'train history by subject with MSN'
+    # fig.write_html(dataPathOutput+figName+'.html')
             
-    fig= px.line(dfRaw, x= 'StartDate', line_group='Subject', y='Subject', color='Box', markers=True)
+      
+    fig= px.line(dfRaw, x= 'StartDateTime', line_group='Subject', y='Subject', color='MSN', markers=True)
 
     fig.show() 
     #plotly export as interactive html
-    figName= 'train history by subject with Box'
+    figName= 'train history by subject with MSN_dateTime'
     fig.write_html(dataPathOutput+figName+'.html')
     
     
-    fig= px.line(dfRaw, x= 'StartDate', line_group='Subject', y='Subject', color='Subject', markers=True)
+    # fig= px.line(dfRaw, x= 'StartDate', line_group='Subject', y='Subject', color='Box', markers=True)
+
+    # fig.show() 
+    # #plotly export as interactive html
+    # figName= 'train history by subject with Box'
+    # fig.write_html(dataPathOutput+figName+'.html')
+    
+    
+    fig= px.line(dfRaw, x= 'StartDateTime', line_group='Subject', y='Subject', color='Box', markers=True)
 
     fig.show() 
     #plotly export as interactive html
-    figName= 'train history by Subject'
+    figName= 'train history by subject with Box_dateTime'
     fig.write_html(dataPathOutput+figName+'.html')
     
-
-
     
-    fig= px.line(dfRaw, x= 'StartDate', line_group='Subject', y='Box', color='Subject', markers=True)
+    
+    # fig= px.line(dfRaw, x= 'StartDate', line_group='Subject', y='Subject', color='Subject', markers=True)
+
+    # fig.show() 
+    # #plotly export as interactive html
+    # figName= 'train history by Subject'
+    # fig.write_html(dataPathOutput+figName+'.html')
+    
+    fig= px.line(dfRaw, x= 'StartDateTime', line_group='Subject', y='Subject', color='Subject', markers=True)
 
     fig.show() 
     #plotly export as interactive html
-    figName= 'train history by Box with Subject Lines'
+    figName= 'train history by Subject_dateTime'
     fig.write_html(dataPathOutput+figName+'.html')
     
+
     
+    # fig= px.line(dfRaw, x= 'StartDate', line_group='Subject', y='Box', color='Subject', markers=True)
+
+    # fig.show() 
+    # #plotly export as interactive html
+    # figName= 'train history by Box with Subject Lines'
+    # fig.write_html(dataPathOutput+figName+'.html')
+    
+    
+
     # fig= px.line(dfRaw, x= 'StartDate', line_group='Box', y='Box', color='Subject', markers=True)
 
     # fig.show() 
