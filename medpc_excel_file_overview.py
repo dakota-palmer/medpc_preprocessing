@@ -118,25 +118,30 @@ if __name__ == '__main__':
     
     #%% Plot of all files by subject
         
-    g= sns.relplot(data= dfRaw, x='StartDate', y='Subject', hue='MSN', kind='scatter')
+    # g= sns.relplot(data= dfRaw, x='StartDate', y='Subject', hue='MSN', kind='scatter')
     
-    g.map_dataframe(sns.lineplot,data= dfRaw, units='Subject', estimator=None, x='StartDate', y='Subject', hue='MSN', alpha=0.5)
+    # g.map_dataframe(sns.lineplot,data= dfRaw, units='Subject', estimator=None, x='StartDate', y='Subject', hue='MSN', alpha=0.5)
 
 
 
-    #%% filter out nans (plotly doesn't like nans)?
+    #%% Replace nan Subjects/MSNs with a warning string (plotly doesn't like nans)    
     ind= dfRaw.Subject.isnull()
     
-    test= dfRaw.loc[~ind,:]
+    # test= dfRaw.loc[~ind,:]
     
-    dfRaw= test
+    dfRaw.loc[ind, 'Subject']= '_null subject!'
+    
+    # dfRaw= test
     
     ind= dfRaw.MSN.isnull()
     
-    test2= dfRaw.loc[~ind,:]
+    # test2= dfRaw.loc[~ind,:]    
     
-    ind= dfRaw.isnull()
-    test3= dfRaw[ind]
+    dfRaw.loc[ind, 'MSN']= '_null MSN!'
+
+    # ind= dfRaw.isnull()
+    
+    # test3= dfRaw[ind]
 
     #%% Sort data by StartDateTime
     # dfRaw= dfRaw.sort_values('StartDateTime')
