@@ -17,6 +17,7 @@ Created on Mon Dec 12 12:07:48 2022
 
 # -- pandas profiling ? easy automated report of behavioral variables to find/flag outlier sessions (e.g. lickometer/PE detector malfunctions)
 # -- make simpler training phases based on MSN dictionary (should make outliers/overall patterns more clear)
+# -- improve output filenames (.xslx sheet name)
 
 if __name__ == '__main__':
     #this is added for pandas-profiling
@@ -92,8 +93,27 @@ if __name__ == '__main__':
     
     # os.chdir(dataPathRoot)
     
+
+    #%% Screen for required columns and add empty if needed (eg if for some reason you didn't extract StartTime column in your excel, make it blank so this viz still works)
+    
+    #TODO: more specific exception for StartTime required below otherwise not-a-time (NAT) when convert to datetime
+    
+    columnsRequired= ['Subject', 'MSN']
+    
+    for thisCol in columnsRequired:
+        if thisCol not in dfRaw.columns:
+            dfRaw[thisCol]= None
+    
+    #if no StartTime column, add placeholer time (so can still be converted to datetime and rest of script/plotting works)
+    if 'StartTime' not in dfRaw.columns:
+        dfRaw['StartTime']= 235959
+
+    
     
     #%% Convert datetime variables 
+    
+    #round date to int (in case it's float for some reason)
+    dfRaw.StartDate= dfRaw.StartDate.astype('int')
 
     #make new column with StartDate and StartTime combined prior to conversion
     #convert to string prior to combining
@@ -111,8 +131,10 @@ if __name__ == '__main__':
     dfRaw.StartDate= pd.to_datetime(dfRaw['StartDate'], format='%y%m%d')
     
     # simply keep StartTime as int (because for some reason was inserting default year/month as 1900)
-    dfRaw.StartTime= dfRaw.StartTime.astype('int')
-
+    try:
+        dfRaw.StartTime= dfRaw.StartTime.astype('int')
+    except:
+        dfRaw.StartTime= dfRaw.StartTime
         
     #%% ~~~ PLOTS ~~~~~~~
     
@@ -154,7 +176,6 @@ if __name__ == '__main__':
  
     
     import plotly.express as px #plotly is good for interactive plots (& can export as nice interactive html)
-    import plotly.io as pio
 
     
     
