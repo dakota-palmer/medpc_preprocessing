@@ -26,7 +26,13 @@ dataPathRoot= os.getcwd()
 dataPathInput= dataPathRoot+'/_medpc_excel_file_overview/_input/'
 
 # output folder, here new folder to save output plots etc
-dataPathOutput= dataPathRoot+'/_medpc_excel_file_overview/_output/'
+dataPathOutput= dataPathRoot+'/_clean_subjects/_output/'
+
+#output folder for log of files with 'cleaned' subjects
+dataPathLogs= dataPathRoot+'/_clean_subjects/_output/_flagged_files/'
+
+#%% TODO:
+    #- support independent cleaning of multiple excel files ... currently make single combined output at end but probs can just extend allFiles loop
 
 #%% ID and import raw data .xlsx
 
@@ -57,6 +63,9 @@ dfRaw['medpc_preprocessing_note']= ''
 #%% Clean subject names
 
 subjectsOG= dfRaw.Subject
+
+#make new column for 'cleaned' subjects
+dfRaw.SubjectCleaned= dfRaw.Subject
 
 #-- strip() to remove any extra spaces
 subjectStripped= dfRaw.Subject.str.strip()
@@ -95,7 +104,65 @@ ind= []
 ind= ~(dfRaw.medpc_preprocessing_note == '')
 
 
-test= dfRaw.loc[ind,:]
+
+#%% save flagged files as csv
+
+flagged= dfRaw.loc[ind,:]
+
+import datetime
+fileName= '_LOG_Files_subjectsCleaned_'+str(datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')) 
+
+os.chdir(dataPathLogs)
+
+# flagged.to_csv(strLog)
+
+#save as excel sheet 
+fileName= fileName+'.xlsx'
+
+flagged.to_excel(fileName)
+
+
+os.chdir(dataPathRoot)
+
+
+#%% Overwrite original subjects with 'cleaned' and save new .xlsx
+
+# overwrite OG column and drop new column
+dfRaw.Subject= dfRaw.SubjectCleaned
+
+dfRaw= dfRaw.drop('SubjectCleaned', axis=1)
+ 
+#keep original excel sheet name, add '_cleaned'
+# TODO: this just grabs first excel file name in allFiles
+fileName= os.path.basename(allfiles[0])
+
+#remove prior .xslx from filename (TODO: assumes exactly .xlsx)
+fileName=fileName[0:-5]
+
+# thisFileName= os.path.basename(fileName)
+
+
+fileName= fileName+'_cleanedSubjects'
+
+os.chdir(dataPathOutput)
+
+
+#save as excel sheet 
+fileName= fileName+'.xlsx'
+
+dfRaw.to_excel(fileName)
+
+os.chdir(dataPathRoot)
+
+
+# import datetime
+# strLog= '_LOG_Files_subjectsCleaned'+str(datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')) +'.txt'
+
+# with open(strLog, 'w') as f: 
+#      for line in test:
+#             f.write(f"{line}\n")          
+
+
 
 # test= subjectsOG.unique()
 # test2= dfRaw.SubjectCleaned.unique()
