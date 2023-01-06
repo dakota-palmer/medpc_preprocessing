@@ -9,6 +9,7 @@ Created on Wed Dec 14 16:05:33 2022
 #% Correct variations in subject names (case, punctuation, spaces)
 
 # input = excel sheet, output= 'cleaned' excel sheet
+#TODO: ( not actually cleaning raw data file .txts)
 
 #%% Import dependencies
 import pandas as pd
@@ -150,7 +151,7 @@ os.chdir(dataPathOutput)
 #save as excel sheet 
 fileName= fileName+'.xlsx'
 
-dfRaw.to_excel(fileName)
+dfRaw.to_excel(fileName, index=False)
 
 os.chdir(dataPathRoot)
 
