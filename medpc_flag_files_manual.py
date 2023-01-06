@@ -89,7 +89,7 @@ dfRaw['flagged']=None
 
 #%% - Correct mislabeled OM20 files
 
-#%% if labelled OM2 and beyond ~May 2019, flag and correct to OM20 
+#%% if labelled OM2 and beyond ~May 2019, flag and correct?  
  
 ind= []
 
@@ -99,32 +99,58 @@ ind= (dfRaw.Subject=='OM2') & (dfRaw.StartDate > 190501)
 ## viz
 # test= dfRaw.loc[ind,:]
 
-flagStr= '_manually_corrected_subject_typo'
+flagStr= '_manually_corrected_subject_typo_OM2'
 
 dfRaw.loc[ind,'medpc_preprocessing_note']= dfRaw.loc[ind,'medpc_preprocessing_note']+flagStr
 dfRaw.loc[ind,'flagged']=1
 
 #manually correct Subject
-dfRaw.loc[ind,'Subject']= 'OM20'
+# dont do this, just flag and review & fix the raw data file
+# dfRaw.loc[ind,'Subject']= 'OM24'
 
-#%% if labelled OM10 and beyond ~November 2019, flag and correct to OM20
+
+#%% exception for 2019-12-16 if subject OM10
+ind= []
+
+# ind= (dfRaw.Subject=='OM10') & (dfRaw.StartDate > '2019-11-01')
+ind= (dfRaw.Subject=='OM10') & (dfRaw.StartDate == 20191216)
+
+
+
+## viz
+test= dfRaw.loc[ind,:]
+
+flagStr= '_manually_corrected_subject_typo_OM10'
+
+dfRaw.loc[ind,'medpc_preprocessing_note']= dfRaw.medpc_preprocessing_note+flagStr
+dfRaw.loc[ind,'flagged']=1
+
+#manually correct Subject
+# dont do this, just flag and review & fix the raw data file
+# dfRaw.loc[ind,'Subject']= 'OM19'
+
+
+
+#%% if labelled OM10 and beyond ~November 2019, flag and correct?
  
 ind= []
 
 # ind= (dfRaw.Subject=='OM10') & (dfRaw.StartDate > '2019-11-01')
 ind= (dfRaw.Subject=='OM10') & (dfRaw.StartDate > 191101)
 
+#exception for 191216?
 
 ## viz
 test= dfRaw.loc[ind,:]
 
-flagStr= '_manually_corrected_subject_typo'
+flagStr= '_manually_corrected_subject_typo_OM10'
 
 dfRaw.loc[ind,'medpc_preprocessing_note']= dfRaw.medpc_preprocessing_note+flagStr
 dfRaw.loc[ind,'flagged']=1
 
-#manually correct Subject
-dfRaw.loc[ind,'Subject']= 'OM20'
+# #manually correct Subject
+# dont do this, just flag and review & fix the raw data file
+# dfRaw.loc[ind,'Subject']= 'OM20'
 
  
  #%% - Correct O27 file
@@ -137,14 +163,15 @@ ind= (dfRaw.Subject=='O27')
 ## viz
 test= dfRaw.loc[ind,:]
 
-# flagStr= '_manually_corrected_subject_typo'
+flagStr= '_manually_corrected_subject_typo_O27'
 
 dfRaw.loc[ind,'medpc_preprocessing_note']= dfRaw.medpc_preprocessing_note+flagStr
 
 dfRaw.loc[ind,'flagged']=1
 
-#manually correct Subject
-dfRaw.loc[ind,'Subject']= 'OV27'
+# #manually correct Subject
+# dont do this, just flag and review & fix the raw data file
+# dfRaw.loc[ind,'Subject']= 'OV27'
 
 
  #%% - Correct OV37 file
@@ -157,14 +184,15 @@ ind= (dfRaw.Subject=='OV37')
 ## viz
 test= dfRaw.loc[ind,:]
 
-# flagStr= '_manually_corrected_subject_typo'
+flagStr= '_manually_corrected_subject_typo_OV37'
 
 dfRaw.loc[ind,'medpc_preprocessing_note']= dfRaw.medpc_preprocessing_note+flagStr
 
 dfRaw.loc[ind,'flagged']=1
 
-#manually correct Subject
-dfRaw.loc[ind,'Subject']= 'OV27'
+# #manually correct Subject
+# dont do this, just flag and review & fix the raw data file
+# dfRaw.loc[ind,'Subject']= 'OV27'
 
 #%% - Make table to save flagged/corrected files
 flagged= pd.DataFrame

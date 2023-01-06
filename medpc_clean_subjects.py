@@ -66,7 +66,7 @@ dfRaw['medpc_preprocessing_note']= ''
 subjectsOG= dfRaw.Subject
 
 #make new column for 'cleaned' subjects
-dfRaw.SubjectCleaned= dfRaw.Subject
+dfRaw['SubjectCleaned']= dfRaw.Subject
 
 #-- strip() to remove any extra spaces
 subjectStripped= dfRaw.Subject.str.strip()
@@ -129,7 +129,7 @@ os.chdir(dataPathRoot)
 #%% Overwrite original subjects with 'cleaned' and save new .xlsx
 
 # overwrite OG column and drop new column
-dfRaw.Subject= dfRaw.SubjectCleaned
+dfRaw.loc[:,'Subject']= dfRaw.SubjectCleaned
 
 dfRaw= dfRaw.drop('SubjectCleaned', axis=1)
  
