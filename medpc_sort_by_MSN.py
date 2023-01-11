@@ -46,7 +46,7 @@ dataPathInput= r'F:\_Github\Richard Lab\data-vp-opto\_MPC_data\_MPC_data_Correct
 
 # output folder, here new folder to save sort output files
 # dataPathOutput= dataPathRoot+'/_find_and_split_duplicates/_output/_split_files'
-dataPathOutput= dataPathInput+'/_sorted_by_MSN'
+dataPathOutput= dataPathInput+'/_sorted_by_MSN/'
 
 #% Define string to search/split
 splitStr= 'MSN:'
