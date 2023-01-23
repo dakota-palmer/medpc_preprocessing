@@ -123,5 +123,91 @@ for thisMSN in uniqueMSN:
         shutil.copy(os.path.abspath(thisFile), path)
 
     
+#%%TODO:  Move files into sub-folders based on manual MSN grouping
+# make custom groups that should be grouped together using your MSNs
+# want to group for common row profile / data extraction methods
+
+# groups=['_MSNs_MagTrain','MSNs_DSTask','MSNs_DSTaskOpto','MSNs_ChoiceTaskOpto','MSNs_ICSS','MSNs_Other']
+
+MSNs_MagTrain= [' JMRmagtraining_30ITI30_licks_Input6', ' JMRmagtraining_30ITI30_licks_ver2']
+
+MSNs_DSTask= [' DS NS Training Stage 1', ' DS NS Training Stage 2', ' DS NS Training Stage 3', 
+              ' DS NS Training Stage 4', ' DS NS Devaluation Training', ' PortEventDSFinalStageCC',
+              ' Opto STAGE 1 DS Task 11_3_2020',
+              ' Opto Stage 2 DS Task 11_3_2020',
+              ' Opto Stage 3 DS Task 11_3_2020',
+              ' Opto STAGE 2 DS Task 11_18_2020',
+              ' Opto Stage 4 DS Task 11_3_2020',
+              ' Opto Final Stage DS Task 11_3_2020',]
+
+MSNs_DSTaskOpto= [' PulsePal Opto Laser DS Code', ' PulsePal Gated Stimulation']
+
+MSNs_ChoiceTaskOpto= [' Dani Lever Press', ' Box1LeverPress', ' Box1LeverPressSWITCHED',
+                      ' DaniLeverPressSWITCHED', ' BOX1ChristelleForcedLeverOpto', ' ChristelleForcedLeverOpto']
+
+MSNs_ICSS= [' Christelle Opto ICSS']
+
+MSNs_Other= [' Opto Stimulation Protocol (cFos)']
 
 
+# Make a dataframe of files and corresponding MSNs, make new column for group
+df= pd.DataFrame()
+
+df['file']= allFiles
+df['fileMSN']= allFilesMSN
+
+df['fileMSNgroup']= None
+
+# go through and assign group if this MSN is in list
+ind= []
+ind= df.fileMSN.isin(MSNs_MagTrain)
+df.loc[ind, 'fileMSNgroup']= 'MSNs_MagTrain'
+
+ind= []
+ind= df.fileMSN.isin(MSNs_DSTask)
+df.loc[ind, 'fileMSNgroup']= 'MSNs_DSTask'
+
+ind= []
+ind= df.fileMSN.isin(MSNs_DSTaskOpto)
+df.loc[ind, 'fileMSNgroup']= 'MSNs_DSTaskOpto'
+
+ind= []
+ind= df.fileMSN.isin(MSNs_ChoiceTaskOpto)
+df.loc[ind, 'fileMSNgroup']= 'MSNs_ChoiceTaskOpto'
+
+ind= []
+ind= df.fileMSN.isin(MSNs_ICSS)
+df.loc[ind, 'fileMSNgroup']= 'MSNs_ICSS'
+
+ind= []
+ind= df.fileMSN.isin(MSNs_Other)
+df.loc[ind, 'fileMSNgroup']= 'MSNs_Other'
+
+
+groupsUnique= df.fileMSNgroup.unique()
+for thisMSNgroup in groupsUnique:
+    
+    #make a new folder for this MSN in output directory   
+    # nest within a new _Manual_Groups folder
+    pathThisMSN= os.path.join(dataPathOutput+'_Manual_Groups/', thisMSNgroup)
+    
+    os.mkdir(pathThisMSN)
+        
+    # #change to pandas series for convenience
+    # allFiles= pd.Series(allFiles)
+    # allFilesMSN= pd.Series(allFilesMSN)
+
+    # #get data files with this MSN and copy them into folder
+    # ind= []
+    # ind= allFilesMSN==thisMSN    
+    
+    ind= df.fileMSNgroup==thisMSNgroup
+    
+    for thisFile in df.loc[ind,'file']:
+        fileNameOG= os.path.basename(thisFile)
+        
+        #copy files into new folder
+        path=[]
+        path= os.path.join(pathThisMSN, fileNameOG)
+                
+        shutil.copy(os.path.abspath(thisFile), path)
