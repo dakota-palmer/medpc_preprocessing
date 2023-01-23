@@ -111,6 +111,7 @@ for thisFile in allFiles:
             #add modified filename to this new split file, flagging for review            
             #find .txt extension and add strFlagFilename before to flag for review
             #overwrite fileName content with flagged filename (do this separately since has newlines etc)
+            # TODO: should cut out the '.txt' here in og name, end result currently has 2
             ind= contentSplit[0].index('.txt')
             contentSplit[0]= contentSplit[0][:ind] + strFlagFilename + contentSplit[0][ind:]
 
